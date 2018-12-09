@@ -3,6 +3,13 @@ title: Lending Club
 ---
 
 
+Group 37: Qing Zhang, Xiyu Ding, Jingyi Chen, Jiaxuan Zhao
+
+
+
+
+
+
 
 ## Contents
 
@@ -29,7 +36,7 @@ Moreover, similar to other loan and investment platforms, Lending Club claims it
 
 
 
-## Statement  
+## Project Statement  
 
 
 Our goal in this project is:   
