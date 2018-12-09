@@ -1,6 +1,6 @@
 theme: jekyll-theme-primer
-title: Support Vector Olives
-description: Keeping Italian Olives Pure!
+title: Home
+description: We are group 37
 baseurl:
 markdown: kramdown
 kramdown:
