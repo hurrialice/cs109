@@ -11,7 +11,6 @@ Group 37: Qing Zhang, Xiyu Ding, Jingyi Chen, Jiaxuan Zhao
 
 
 
-## Contents
 
 
 {:.no_toc}

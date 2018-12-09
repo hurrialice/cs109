@@ -4,7 +4,6 @@ nav_include: 1
 notebook: EDA_ver1.ipynb
 ---
 
-## Contents
 
 {:.no_toc}
 *  
