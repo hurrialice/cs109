@@ -1,3 +1,17 @@
+---
+title: Models
+nav_include: 3
+notebook: Models.ipynb
+---
+
+
+{:.no_toc}
+*  
+{: toc}
+
+
+
+
 
 ## Load libraries
 
@@ -63,6 +77,28 @@ np.set_printoptions(precision=2)
 
 
 ## Data Cleaning
+
+### Data Cleaning Steps 
+
+- Categorize loan_status to 0 and 1. Remove "current", change "fully paid" to 1 and the rest to 0. 
+
+- However, we are facing a class imbalance issue, so we sampled
+2500 records (rows) from each 2016 month for each loan_status (0, 1), total 5000 * 12 cases. 
+
+- Delete columns that contain more than 10% missing rows. 
+
+- Remove varibales that can't be pharsed. Job title and title in this dataset contain various user input informations. They can't be diagonsed in this project due to out current knowledge. 
+
+- Delete columns that are highly correlated with loan_status by definition. For instance, last_pymnt_d, total_pymnt_inv, last_pymnt_amnt, total_pymnt, funded_amnt, etc. Some of them will be reused when calculate ROI. 
+
+- Calculate varibles' correlations and drop the one that is highly associated with others,
+num_rev_tl_bal_gt_0, tot_cur_bal, tot_hi_cred_lim, and total_bc_limit.
+
+- In the remaining dataset, change categorical variables to dummy variable. 
+
+- Standardize all non-binary variables
+
+- Split the dataset equally into train and test, stratifying on loan status.
 
 
 

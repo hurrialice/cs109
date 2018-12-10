@@ -1,6 +1,6 @@
 ---
 title: Exploratory Data Analysis
-nav_include: 1
+nav_include: 2
 notebook: EDA_ver1.ipynb
 ---
 
