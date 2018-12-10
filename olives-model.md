@@ -1,6 +1,6 @@
 ---
-nav_include: 2
-title: Models
+nav_include: 
+title: old_model
 notebook: olives-model.ipynb
 ---
 

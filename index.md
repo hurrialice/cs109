@@ -1,5 +1,5 @@
 ---
-title: Home
+title: Lending Club Home
 nav_include: 1
 ---
 
