@@ -44,8 +44,7 @@ Our goal in this project is:
 - to predict the probability that a loan will be fully returned plus interest rate by the end of the due date when the loan just be proved by lending company
 
 
-- use the probilities from (1) to calculate ROI
-
+- use the probilities from (1) to calculate Return on Investment (ROI), where ROI is a performance measure used to evaluate the efficiency of an investment or compare the efficiency of a number of different investments. ROI tries to directly measure the amount of return on a particular investment, relative to the investment’s cost.
 
 - compare predicted ROI with true ROI to see the benefit of our model (profit)
 
@@ -56,11 +55,9 @@ Our goal in this project is:
 
 ## Data Sourcing
 
-The data in this project came from 2016 Lending Club web as row represents each loan and column represents features of each loan. We decided to use this dataset since we believed most of the borrowers can return the full loan within two years (2018), and the most recent data set should give us a better model that can reflecte the LendingClub's current lending loan. 
+The data in this project came from 2016 Lending Club web as row represents each loan and column represents features of each loan. We decided to use this dataset since we believed most of the borrowers can return the full loan within two years (2018), and the most recent data set should give us a better model that can reflecte the LendingClub’s current lending loan.
 
-
-In accepted datasets, they contain information about the loans as well as personal description. For example, loan information contains loan amount, funded amount, interest rate, etc. Personal information contains employ title, length, annual income, purpose, state, etc. The other one is the rejected datasets. Since they only contain a few variables, we will not use it to fit the model. We probably will draw some plots based on rejected and accepted datasets to explore discrimination later. 
-
+In accepted datasets, they contain information about the loans as well as personal description. For example, loan information contains loan amount, funded amount, interest rate, etc. Personal information contains employ title, length, annual income, purpose, state, etc. The other one is the rejected datasets. Since they only contain a few variables, we will not use it to fit the model. They can be used to explore discrimination.
 
 ## Reference 
 
