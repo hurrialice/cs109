@@ -1,3 +1,18 @@
+---
+title: Discrimination
+nav_include: 4
+notebook: Discrimination_Analysis.ipynb
+---
+
+
+{:.no_toc}
+*  
+{: toc}
+
+
+
+
+
 
 Discrimination is the act of someone being prejudice towards another. Forms of discrimination include nationalist, race, gender, religions, etc. 
 
