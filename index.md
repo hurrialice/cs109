@@ -25,7 +25,7 @@ Group 37: Qing Zhang, Xiyu Ding, Jingyi Chen, Jiaxuan Zhao
 
 Lending Club is the lending network to register with the Securities and Exchange Commission (SEC). It's mission is to transform the banking system to make credit more affordable and investing more rewarding [1]. The Lending Club platform connects borrowers to investors and facilitates the payment of loans up to \$40,000 [2]. The basic idea is that borrowers apply for a loan on the Lending Club Marketplace. Investors can review the loan applications, along with risk analysis provided by LendingClub, to determine how much of the loan request they are willing to fund. When the loan is funded, the borrower will receive the loan.
 
-
+![Figure-1 How it works](index_files/how-it-works.png)
 
 Based on the setting of this platform, investors can make wrong decisions in some situations (the borrower received the loan even they don't have ability to return the money). In this case, we want to provide a better model that can predict the probability of fully return.    
 

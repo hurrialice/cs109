@@ -92,7 +92,7 @@ A naive way of formalising it would be to divide net gain by investiment amount.
 
 Hence we determined the threshold for each model that will maximize naive ROI.
 
-![Figure-3. Naive ROI vs probability cutoff](Conclusion/raw_roi.png)
+![Figure-3. Naive ROI vs probability cutoff](Conclusion_files/naive_roi_curve.png)
 
 Indeed, given fixed amount of money to invest, we could get the maximum ROI from those indicated cutoffs. However in reality this approach seems problematic, since it seems that we need to reject most of the loans in order to get the best ROI. For a investor that is financially capable to take on more risk, this approach limits their loan choices exclusively to those "safe" deals, but not the others that might be more profitable but more risky. Moreover, in reality each investor could invest different amount of notes into each posted loans so that they are allowed to split the risk. Therefore, the actual capacity for each investor to take on risks in perhaps more than we currently expect.
 
@@ -110,7 +110,7 @@ The nominator of iROI (net return) is calculated as the amount of return from wh
 For each model, we tested on each threshold to determine the one that will give the largest iROI.
 
 
-![Figure-4. Determine best iROI](Conclusion_files/roi_improve.png)
+![Figure-4. Determine cutoff for best iROI](Conclusion_files/improved_curve.png)
 
 
 ![Table-2. Naive ROI-based cutoff](Conclusion_files/naive_roi.png)
