@@ -43,6 +43,7 @@ From the models above, we think tree-based models (decision tree, random forest,
 
 ![Figure-1. Feature weights or importances](Conclusion_files/coeff.png)
 
+Figure-1. Feature weights or importances
 
 
 We found some consensus important factors that can be grouped into subcategories - 
@@ -74,8 +75,13 @@ We used grid search to optimise hyper-parameters for each model. The models give
 
 ![Figure-2. ROC curves for each model](Conclusion_files/roc.png)
 
+Figure-2. ROC curves for each model
+
+
 
 ![Table-1. Performance metrics](Conclusion_files/raw_compare.png)
+
+Table-1. Performance metrics
 
 
 It seems Random Forest and Neural Network gives best performances, in terms of specificity and AUC. 
@@ -93,6 +99,9 @@ A naive way of formalising it would be to divide net gain by investiment amount.
 Hence we determined the threshold for each model that will maximize naive ROI.
 
 ![Figure-3. Naive ROI vs probability cutoff](Conclusion_files/naive_roi_curve.png)
+
+Figure-3. Naive ROI vs probability cutoff
+
 
 Indeed, given fixed amount of money to invest, we could get the maximum ROI from those indicated cutoffs. However in reality this approach seems problematic, since it seems that we need to reject most of the loans in order to get the best ROI. For a investor that is financially capable to take on more risk, this approach limits their loan choices exclusively to those "safe" deals, but not the others that might be more profitable but more risky. Moreover, in reality each investor could invest different amount of notes into each posted loans so that they are allowed to split the risk. Therefore, the actual capacity for each investor to take on risks in perhaps more than we currently expect.
 
@@ -112,11 +121,20 @@ For each model, we tested on each threshold to determine the one that will give 
 
 ![Figure-4. Determine cutoff for best iROI](Conclusion_files/improved_curve.png)
 
+Figure-4. Determine cutoff for best iROI
+
+
+
 
 ![Table-2. Naive ROI-based cutoff](Conclusion_files/naive_roi.png)
 
+Table-2. Naive ROI-based cutoff
 
 ![Table-3 Improved ROI-based cutoff](Conclusion_files/improved_roi.png)
+
+Table-3 Improved ROI-based cutoff
+
+
 
 
 We chose the metrics above to assess performance of each model.
