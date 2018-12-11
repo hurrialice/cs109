@@ -37,11 +37,11 @@ The models are -
 
 ### Important Predictors
 
-From the models above, we think tree-based models: decision tree, random forest, and AdaBoost, along with logistic regression is the most interpretable. Hence we compared weights or importance among each predictor to find out the most important ones.
+From the models above, we think tree-based models (decision tree, random forest, and AdaBoost), along with logistic regression is the most interpretable. Hence we compared weights or importance among each predictor to find out the most important ones.
 
 
 
-![feature coefficients or importances](Conclusion_files/coeff.png)
+![Figure-1. Feature weights or importances](Conclusion_files/coeff.png)
 
 
 
@@ -66,48 +66,70 @@ We found some consensus important factors that can be grouped into subcategories
 2)  The first is income information, including the annual income, categorized employment length. These variables could indicate borrower’s ability to fulfill the loan.
 
 
+
 ### Predictive Quality
 
-
-The models give the following ROC and performance metrics on test set.
-
-
-![ROC curves for each model](Conclusion_files/roc.png)
+We used grid search to optimise hyper-parameters for each model. The models give the following ROC and performance metrics on test set.
 
 
-![Performance metrics](Conclusion_files/raw_compare.PNG)
+![Figure-2. ROC curves for each model](Conclusion_files/roc.png)
 
 
-However, a good performance on test set does not necessarily indicate good performance in ROI. 
-
-ROI is calculated as the net return from investment over the amount of input. Since we are investing on the people who are predicted to fully return their loans, we will suffer from two kinds of mistakes - 
-
-- A. We gave money to the wrong person who cannot pay back fully.
-
-- B. We rejected decent people. Thus we lose part of the rates that we would have got if we had lent money to them.
-
-Since the net return is calculated as total payment minus the funded amount, we could simply use the net return from the loans that we would fund (which loans that are predicted to pay back in full) minus the net return that we would have had if we would not reject (which loans that are not predicted to be full-paid.
-
-As formally defined in “model” section, we used a modified version of ROI that takes “hidden loss” into consideration. We determined the threshold for each model to maximizing the combined net return.
-
-For each model, we tested on each threshold to determine the one that will give the largest improved ROI.
+![Table-1. Performance metrics](Conclusion_files/raw_compare.png)
 
 
-![Determine best ROI](Conclusion_files/roi.png)
+It seems Random Forest and Neural Network gives best performances, in terms of specificity and AUC. 
 
 
 ### Expected Returns
 
-Hence we defined the threshold from the critical point that will maximize iROI. The model performance measure is given as - 
+
+A good performance on test set does not necessarily indicate good performance in Return On Investiment (ROI). Given our optimised models, we want to determine the optimal cutoff in predicted probability that will maximize ROI.
+
+ROI is calculated as the net return from investment over the amount of input. 
+
+A naive way of formalising it would be to divide net gain by investiment amount. In this approach we only consider the return on investiment rate from the loans that were invested.
+
+Hence we determined the threshold for each model that will maximize naive ROI.
+
+![Figure-3. Naive ROI vs probability cutoff](Conclusion/raw_roi.png)
+
+Indeed, given fixed amount of money to invest, we could get the maximum ROI from those indicated cutoffs. However in reality this approach seems problematic, since it seems that we need to reject most of the loans in order to get the best ROI. For a investor that is financially capable to take on more risk, this approach limits their loan choices exclusively to those "safe" deals, but not the others that might be more profitable but more risky. Moreover, in reality each investor could invest different amount of notes into each posted loans so that they are allowed to split the risk. Therefore, the actual capacity for each investor to take on risks in perhaps more than we currently expect.
 
 
+How do we find the optimal cutoff that could be less conservative while still maintaining substantial ROI? From this point we came up with another metric - improved ROI (iROI) by incorporating additional hidden loss.
 
-![Compare model returns](Conclusion_files/compare_models.PNG)
+Since we are investing on the people who are predicted to fully return their loans, there are two types of returns that we intend to maximize - 
 
-Sensitivity is defined as the probability of identifying true fully-paid (or any form of delayed payments) from exact full paid. Specificity is defined as the probability of identifying true charge-offs (or any other forms of delays) from exact delays. We could see that all models except QDA tend to have high specificity but low sensitivity on real data, where the majority of the accepted loans are fully paid. Hence they tend to make conservative predictions that tend to be cautious about whether someone could payback. Perhaps due to the relatively conservative prediction strategy from our models, we confirmed that except QDA, each model could give over a 15% increase in return on investment. 
+- A. the return from our invested loans
+
+- B. the loss from our uninvestied loans, if we would also invested them
+
+The nominator of iROI (net return) is calculated as the amount of return from which we invested, minus the amount of return we would have get, if we had invested on those loans that we actually did not invest. Similarly, we determined the threshold for each model to maximizing the combined net return.
+
+For each model, we tested on each threshold to determine the one that will give the largest iROI.
 
 
-Comparing all the models above from both ROI perspective and prediction performance metrics, we conclude that Random Forest and Neural Network gives the optimal performance. We would like to recommend to investors to refer to these two model for wiser investments. 
+![Figure-4. Determine best iROI](Conclusion_files/roi_improve.png)
+
+
+![Table-2. Naive ROI-based cutoff](Conclusion_files/naive_roi.png)
+
+
+![Table-3 Improved ROI-based cutoff](Conclusion_files/improved_roi.png)
+
+
+We chose the metrics above to assess performance of each model.
+
+Sensitivity is defined as the probability of identifying true fully-paid (or any form of delayed payments) from exact full paid. It indicates the probability of identifying decent loan requests.
+
+Specificity is defined as the probability of identifying true charge-offs (or any other forms of delays) from exact delays. Higher specificity means better ability to identify the risky loans, but at the same time it increases with conservativeness.
+
+
+Here we could see clearly, threshold optimized via ROI is more conservative than those from iROI. For each tables, we could see that all models except QDA tend to have high specificity but low sensitivity on real data, where the majority of the accepted loans are fully paid. 
+
+
+How we would use our model to recommend investiments? We would use the ROI-based model to give investiment suggestions to those conservative players - who think more about safety rather than profits. On the contrary, we would use the iROI-based model to guide profit-driven investors - who are willing to take the risk for high returns.
 
 
 ## Ethical Implications of Model

@@ -13,6 +13,10 @@ notebook: Models.ipynb
 
 
 
+
+
+
+
 ## Load libraries
 
 
@@ -77,28 +81,6 @@ np.set_printoptions(precision=2)
 
 
 ## Data Cleaning
-
-### Data Cleaning Steps 
-
-- Categorize loan_status to 0 and 1. Remove "current", change "fully paid" to 1 and the rest to 0. 
-
-- However, we are facing a class imbalance issue, so we sampled
-2500 records (rows) from each 2016 month for each loan_status (0, 1), total 5000 * 12 cases. 
-
-- Delete columns that contain more than 10% missing rows. 
-
-- Remove varibales that can't be pharsed. Job title and title in this dataset contain various user input informations. They can't be diagonsed in this project due to out current knowledge. 
-
-- Delete columns that are highly correlated with loan_status by definition. For instance, last_pymnt_d, total_pymnt_inv, last_pymnt_amnt, total_pymnt, funded_amnt, etc. Some of them will be reused when calculate ROI. 
-
-- Calculate varibles' correlations and drop the one that is highly associated with others,
-num_rev_tl_bal_gt_0, tot_cur_bal, tot_hi_cred_lim, and total_bc_limit.
-
-- In the remaining dataset, change categorical variables to dummy variable. 
-
-- Standardize all non-binary variables
-
-- Split the dataset equally into train and test, stratifying on loan status.
 
 
 
@@ -300,7 +282,7 @@ print('Total Number of Predictors is %d' %np.sum(dt_base.feature_importances_ > 
 ```
 
 
-    Total Number of Predictors is 71
+    Total Number of Predictors is 74
 
 
 
@@ -467,8 +449,8 @@ print("sclf Accuracy on Testing Set :",str(sclf_test_score)+'%')
       FutureWarning)
 
 
-    sclf Accuracy on Training Set : 67.94%
-    sclf Accuracy on Testing Set : 66.99666666666667%
+    sclf Accuracy on Training Set : 67.91333333333334%
+    sclf Accuracy on Testing Set : 67.07%
 
 
 
@@ -546,21 +528,21 @@ NNmodel.summary()
     _________________________________________________________________
     Layer (type)                 Output Shape              Param #   
     =================================================================
-    dense_1 (Dense)              (None, 200)               15400     
+    dense_9 (Dense)              (None, 200)               15400     
     _________________________________________________________________
-    dropout_1 (Dropout)          (None, 200)               0         
+    dropout_7 (Dropout)          (None, 200)               0         
     _________________________________________________________________
-    dense_2 (Dense)              (None, 100)               20100     
+    dense_10 (Dense)             (None, 100)               20100     
     _________________________________________________________________
-    dropout_2 (Dropout)          (None, 100)               0         
+    dropout_8 (Dropout)          (None, 100)               0         
     _________________________________________________________________
-    gaussian_noise_1 (GaussianNo (None, 100)               0         
+    gaussian_noise_3 (GaussianNo (None, 100)               0         
     _________________________________________________________________
-    dense_3 (Dense)              (None, 40)                4040      
+    dense_11 (Dense)             (None, 40)                4040      
     _________________________________________________________________
-    dropout_3 (Dropout)          (None, 40)                0         
+    dropout_9 (Dropout)          (None, 40)                0         
     _________________________________________________________________
-    dense_4 (Dense)              (None, 1)                 41        
+    dense_12 (Dense)             (None, 1)                 41        
     =================================================================
     Total params: 39,581
     Trainable params: 39,581
@@ -575,10 +557,8 @@ NNmodel.compile(optimizer='adamax',loss='binary_crossentropy', metrics=['accurac
 NNmodel_history = NNmodel.fit(X_train, y_train, 
                          epochs=epochs, shuffle = True, validation_split=0.3,
                          callbacks=[EarlyStopping(monitor='val_acc', patience = 20, mode = "max")], 
-                         verbose=0)
+                         verbose=1)
 ```
-
-
 
 
 ```python
@@ -655,7 +635,7 @@ pd.DataFrame({
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x10509c9e8>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1a1fd9f860>
 
 
 
@@ -756,10 +736,10 @@ pd.DataFrame(plist,index = model_perf_dict.keys(),
     </tr>
     <tr>
       <th>Random Forest</th>
-      <td>0.671898</td>
-      <td>0.668404</td>
-      <td>0.670133</td>
-      <td>0.741924</td>
+      <td>0.671424</td>
+      <td>0.668141</td>
+      <td>0.669767</td>
+      <td>0.741158</td>
     </tr>
     <tr>
       <th>Logistic L2</th>
@@ -770,10 +750,10 @@ pd.DataFrame(plist,index = model_perf_dict.keys(),
     </tr>
     <tr>
       <th>Adaboost</th>
-      <td>0.647314</td>
-      <td>0.637865</td>
-      <td>0.642433</td>
-      <td>0.689739</td>
+      <td>0.648051</td>
+      <td>0.638907</td>
+      <td>0.643333</td>
+      <td>0.691520</td>
     </tr>
     <tr>
       <th>LDA</th>
@@ -791,17 +771,17 @@ pd.DataFrame(plist,index = model_perf_dict.keys(),
     </tr>
     <tr>
       <th>stacking</th>
-      <td>0.668362</td>
-      <td>0.671603</td>
-      <td>0.669967</td>
-      <td>0.741007</td>
+      <td>0.669446</td>
+      <td>0.671973</td>
+      <td>0.670700</td>
+      <td>0.741173</td>
     </tr>
     <tr>
       <th>Neural Network</th>
-      <td>0.666951</td>
-      <td>0.672403</td>
-      <td>0.669633</td>
-      <td>0.741610</td>
+      <td>0.684795</td>
+      <td>0.656828</td>
+      <td>0.669667</td>
+      <td>0.742890</td>
     </tr>
   </tbody>
 </table>
@@ -821,7 +801,7 @@ Here, 0.5 is the threshold of prediction, based on which we decide whether to in
 
 In the following analysis, we would like to find the best threshold of prediction to improve ROI and optimize our investing stategy. 
 
-## Caluclate ROI
+## Caluclate ROI and iROI
 
 Based on our model, if one application's loan_status is predicted as 1, we will invest in this loan; otherwise, we won't. One of the popular ways to assess the benefit of investment is calculating the Return of Investment (ROI). The fomula of ROI is given by: 
 
@@ -829,7 +809,10 @@ Based on our model, if one application's loan_status is predicted as 1, we will 
 
 The nominator **(Gain from Investment - Cost of Investment)** is also defined as the **net return on investment (NRI)**. 
 
-For this problem, there are four different scenarios of predicted loan_status vs. true loan_status, as shown in the following table. We are using the `Loan Data` of 2016 from the website, including all the loan not declined, hence, all these applications are invested in real world. 
+
+The most straightforward way to encode ROI is to use net return from our investments divided by the amount of investments:**(Exact Gain - Exact Loss)/ Total Funded**
+
+However we try to approach this problem in a different way. There are four different scenarios of predicted loan_status vs. true loan_status, as shown in the following table. We are using the `Loan Data` of 2016 from the website, including all the loan not declined, hence, all these applications are invested in real world. 
 
 | Index | Category | Predicted Loan_status | True Loan_status | Whehter invested in real world|
 | --- | --- | --- | --- | --- |
@@ -846,7 +829,7 @@ We also consider the two scenarios where the predicted loan_status is 0. If the 
 
 We define the improved ROI (iROI) as the percent increase in ROI using the model investment strategy compared to the true ROI based on the `Loan Data` in 2016. The improved ROI (iROI) can be calculated by the following formula:
 
-$$iROI = \frac{(MNRI - RNRI)}{Total\ funded\ amount}$$
+$$iROI = \frac{MNRI}{\sum \ funded\_amnt}$$
 
 The **Model Net Return on Investment (MNRI)** is calculated as **(Exact Gain - Exact Loss)-(Hidden Loss- Hidden Gain) = Exact Return - Hidden Return**:
 
@@ -934,7 +917,7 @@ df_loans = acc.iloc[acc_df.index,:][["funded_amnt","total_pymnt","loan_status"]]
 ```
 
 
-    /Users/Grace/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:49: DataConversionWarning: Data with input dtype int64, float64 were all converted to float64 by StandardScaler.
+    /Users/Grace/anaconda3/lib/python3.6/site-packages/ipykernel_launcher.py:48: DataConversionWarning: Data with input dtype int64, float64 were all converted to float64 by StandardScaler.
 
 
 
@@ -942,15 +925,17 @@ df_loans = acc.iloc[acc_df.index,:][["funded_amnt","total_pymnt","loan_status"]]
 ```python
 # calculate baseline return
 net_gain = df_loans["total_pymnt"].values-df_loans["funded_amnt"].values
+funded_amnt = df_loans["funded_amnt"].values
 baseline_net_gain = np.sum(net_gain)
-baseline_founded = np.sum(df_loans["funded_amnt"].values)
+baseline_funded = np.sum(df_loans["funded_amnt"].values)
+baseline_roi = np.sum(net_gain)/baseline_funded*100
 ```
 
 
 
 
 ```python
-def calc_roi(X_in, y_in, model_name):
+def calc_roi(X_in, y_in, model_name, ifnaive = 0):
     
     # get the predicted probability from the model
     if model_name == "Neural Network":
@@ -960,7 +945,7 @@ def calc_roi(X_in, y_in, model_name):
         
     # grid search to find the best threshold/cutoff
     gain_list = []
-    for i in  np.linspace(0, 0.99, 100):
+    for i in  np.linspace(0, 0.90, 90):
         y_give = (y_prob >= i).astype("int")
         y_notgive = 1-y_give
         
@@ -969,7 +954,12 @@ def calc_roi(X_in, y_in, model_name):
         # for those who are predicted not to return money
         hidden_return = np.sum(net_gain*y_notgive)
         
-        gain = ((exact_return-hidden_return) - baseline_net_gain)/baseline_founded
+        loan_funded = np.sum(y_give*funded_amnt)
+        
+        if ifnaive == 0:
+            gain = exact_return/loan_funded
+        else:
+            gain = (exact_return-hidden_return)/baseline_funded
         gain_list.append(gain*100)
     
     #find the best threshold's corresponding index and store it in the list
@@ -998,27 +988,203 @@ def calc_roi(X_in, y_in, model_name):
 ```
 
 
+### ROI
+
 
 
 ```python
-gain_dict = {}
+roi_dict = {}
 
 plt.figure(figsize = (20,15))
-plt.ylim([0,16.5])
+plt.ylim([-7.5,10])
 plt.grid(False)
 plt.axis('on')
-plt.axhline(y = 0, linestyle="--",label = "baseline", alpha = 0.5)
+plt.axhline(y = baseline_roi, linestyle="--",label = "baseline-Real ROI", alpha = 0.5)
 
 for key in model_dict:
-    rates, best_index, gain_dict[key] = calc_roi(X_acc, y_acc, key)
-    best_gain = gain_dict[key][0]
+    rates, best_index, roi_dict[key] = calc_roi(X_acc, y_acc, key)
+    best_gain = roi_dict[key][0]
     plt.plot(rates, label = '%s (cutoff = %0.2f)' % (key, best_index*0.01))
     plt.plot([best_index, ] * 2, [0, best_gain], alpha=0.4,
              linestyle='-.', color="grey", marker='x', markeredgewidth=3, ms=8)
     plt.annotate("%0.2f" % best_gain,
                 (best_index*(1-0.01), best_gain+0.5))
 plt.legend(fontsize = 16)
-plt.xticks(np.linspace(0, 100, 10), np.round(np.linspace(0, 1, 10),1) )
+plt.xticks(np.linspace(0, 90, 9), np.round(np.linspace(0, 1, 10),1) )
+plt.xlabel("Threshold",fontsize = 16)
+plt.ylabel("ROI",fontsize = 16)
+plt.title("ROI vs. Threshold",fontsize = 16)
+plt.show()
+```
+
+
+
+![png](Models_files/Models_56_0.png)
+
+
+
+
+```python
+roi_col_names = ["ROI", "Threshold", "sensitivity", "specificity","accuracy", "ROC_AUC", "Accepted Rate"]
+
+roi_df = pd.DataFrame.from_dict(roi_dict, orient='index', columns = roi_col_names)
+```
+
+
+
+
+```python
+roi_df
+```
+
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ROI</th>
+      <th>Threshold</th>
+      <th>sensitivity</th>
+      <th>specificity</th>
+      <th>accuracy</th>
+      <th>ROC_AUC</th>
+      <th>Accepted Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Decision Tree</th>
+      <td>2.027476</td>
+      <td>0.74</td>
+      <td>0.334644</td>
+      <td>0.913666</td>
+      <td>0.453766</td>
+      <td>0.727954</td>
+      <td>0.205730</td>
+    </tr>
+    <tr>
+      <th>Random Forest</th>
+      <td>3.616724</td>
+      <td>0.81</td>
+      <td>0.293583</td>
+      <td>0.975353</td>
+      <td>0.318993</td>
+      <td>0.763520</td>
+      <td>0.037271</td>
+    </tr>
+    <tr>
+      <th>Logistic L2</th>
+      <td>3.830847</td>
+      <td>0.89</td>
+      <td>0.291113</td>
+      <td>0.968435</td>
+      <td>0.310825</td>
+      <td>0.748555</td>
+      <td>0.029103</td>
+    </tr>
+    <tr>
+      <th>Adaboost</th>
+      <td>2.186434</td>
+      <td>0.51</td>
+      <td>0.371040</td>
+      <td>0.889698</td>
+      <td>0.545057</td>
+      <td>0.737342</td>
+      <td>0.335513</td>
+    </tr>
+    <tr>
+      <th>LDA</th>
+      <td>4.010311</td>
+      <td>0.89</td>
+      <td>0.289501</td>
+      <td>0.972222</td>
+      <td>0.305000</td>
+      <td>0.747603</td>
+      <td>0.022702</td>
+    </tr>
+    <tr>
+      <th>QDA</th>
+      <td>-5.175743</td>
+      <td>0.02</td>
+      <td>0.851644</td>
+      <td>0.744913</td>
+      <td>0.750007</td>
+      <td>0.571984</td>
+      <td>0.952272</td>
+    </tr>
+    <tr>
+      <th>stacking</th>
+      <td>3.433836</td>
+      <td>0.89</td>
+      <td>0.290394</td>
+      <td>0.974413</td>
+      <td>0.308049</td>
+      <td>0.749502</td>
+      <td>0.025811</td>
+    </tr>
+    <tr>
+      <th>Neural Network</th>
+      <td>3.729304</td>
+      <td>0.89</td>
+      <td>0.297757</td>
+      <td>0.965476</td>
+      <td>0.333770</td>
+      <td>0.752707</td>
+      <td>0.053935</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+
+```python
+roi_df.to_csv("../Data/cdf_roi.csv")
+```
+
+
+### iROI
+
+
+
+```python
+iroi_dict = {}
+
+plt.figure(figsize = (20,15))
+plt.ylim([-7.5,10])
+plt.grid(False)
+plt.axis('on')
+plt.axhline(y = 0, linestyle="--",label = "baseline", alpha = 0.5)
+
+for key in model_dict:
+    rates, best_index, iroi_dict[key] = calc_roi(X_acc, y_acc, key, ifnaive = 1)
+    best_gain = iroi_dict[key][0]
+    plt.plot(rates, label = '%s (cutoff = %0.2f)' % (key, best_index*0.01))
+    plt.plot([best_index, ] * 2, [0, best_gain], alpha=0.4,
+             linestyle='-.', color="grey", marker='x', markeredgewidth=3, ms=8)
+    plt.annotate("%0.2f" % best_gain,
+                (best_index*(1-0.01), best_gain+0.5))
+plt.legend(fontsize = 16)
+plt.xticks(np.linspace(0, 90, 9), np.round(np.linspace(0, 1, 10),1))
 plt.xlabel("Threshold",fontsize = 16)
 plt.ylabel("iROI",fontsize = 16)
 plt.title("iROI vs. Threshold",fontsize = 16)
@@ -1027,25 +1193,16 @@ plt.show()
 
 
 
-![png](Models_files/Models_55_0.png)
+![png](Models_files/Models_61_0.png)
 
 
 
 
 ```python
-gain_col_names = ["iROI", "Threshold", "sensitivity", "specificity","accuracy", "ROC_AUC", "Accepted Rate"]
-
-gain_df = pd.DataFrame.from_dict(gain_dict, orient='index', columns = gain_col_names)
+iroi_col_names = ["iROI", "Threshold", "sensitivity", "specificity","accuracy", "ROC_AUC", "Accepted Rate"]
+iroi_df = pd.DataFrame.from_dict(iroi_dict, orient='index', columns = iroi_col_names)
+display(iroi_df)
 ```
-
-
-
-
-```python
-gain_df
-```
-
-
 
 
 
@@ -1079,83 +1236,83 @@ gain_df
   <tbody>
     <tr>
       <th>Decision Tree</th>
-      <td>14.222172</td>
-      <td>0.69</td>
-      <td>0.334638</td>
-      <td>0.913660</td>
-      <td>0.453751</td>
-      <td>0.727935</td>
-      <td>0.205715</td>
+      <td>7.496681</td>
+      <td>0.68</td>
+      <td>0.335601</td>
+      <td>0.911756</td>
+      <td>0.456820</td>
+      <td>0.727954</td>
+      <td>0.210393</td>
     </tr>
     <tr>
       <th>Random Forest</th>
-      <td>14.641830</td>
-      <td>0.64</td>
-      <td>0.358712</td>
-      <td>0.915319</td>
-      <td>0.511361</td>
-      <td>0.763703</td>
-      <td>0.274249</td>
+      <td>7.928867</td>
+      <td>0.62</td>
+      <td>0.369777</td>
+      <td>0.908165</td>
+      <td>0.536784</td>
+      <td>0.763520</td>
+      <td>0.310199</td>
     </tr>
     <tr>
       <th>Logistic L2</th>
-      <td>14.503947</td>
-      <td>0.67</td>
-      <td>0.360188</td>
-      <td>0.899274</td>
-      <td>0.519400</td>
+      <td>7.773277</td>
+      <td>0.66</td>
+      <td>0.364684</td>
+      <td>0.895965</td>
+      <td>0.530041</td>
       <td>0.748555</td>
-      <td>0.295337</td>
+      <td>0.311242</td>
     </tr>
     <tr>
       <th>Adaboost</th>
-      <td>14.726520</td>
-      <td>0.51</td>
-      <td>0.370823</td>
-      <td>0.889144</td>
-      <td>0.544809</td>
-      <td>0.736626</td>
-      <td>0.335672</td>
+      <td>7.989183</td>
+      <td>0.50</td>
+      <td>0.456881</td>
+      <td>0.842002</td>
+      <td>0.680213</td>
+      <td>0.737342</td>
+      <td>0.579900</td>
     </tr>
     <tr>
       <th>LDA</th>
-      <td>14.508178</td>
-      <td>0.67</td>
-      <td>0.362287</td>
-      <td>0.897472</td>
-      <td>0.524490</td>
+      <td>7.791632</td>
+      <td>0.66</td>
+      <td>0.366830</td>
+      <td>0.893528</td>
+      <td>0.535285</td>
       <td>0.747603</td>
-      <td>0.303079</td>
+      <td>0.319832</td>
     </tr>
     <tr>
       <th>QDA</th>
-      <td>3.634651</td>
-      <td>0.99</td>
-      <td>0.836693</td>
-      <td>0.744950</td>
-      <td>0.749446</td>
+      <td>-3.095161</td>
+      <td>0.08</td>
+      <td>0.844826</td>
+      <td>0.744938</td>
+      <td>0.749764</td>
       <td>0.571984</td>
-      <td>0.950986</td>
+      <td>0.951681</td>
     </tr>
     <tr>
       <th>stacking</th>
-      <td>14.345748</td>
-      <td>0.73</td>
-      <td>0.350759</td>
-      <td>0.906677</td>
-      <td>0.495874</td>
-      <td>0.749352</td>
-      <td>0.261036</td>
+      <td>7.628692</td>
+      <td>0.72</td>
+      <td>0.355226</td>
+      <td>0.902942</td>
+      <td>0.507269</td>
+      <td>0.749502</td>
+      <td>0.277596</td>
     </tr>
     <tr>
       <th>Neural Network</th>
-      <td>14.598623</td>
-      <td>0.67</td>
-      <td>0.359184</td>
-      <td>0.904271</td>
-      <td>0.515651</td>
-      <td>0.754379</td>
-      <td>0.287050</td>
+      <td>7.725996</td>
+      <td>0.70</td>
+      <td>0.347634</td>
+      <td>0.912778</td>
+      <td>0.486688</td>
+      <td>0.752707</td>
+      <td>0.246050</td>
     </tr>
   </tbody>
 </table>
@@ -1164,9 +1321,8 @@ gain_df
 
 
 
-
 ```python
-gain_df.to_csv("../Data/cdf_gain.csv")
+iroi_df.to_csv("../Data/cdf_iroi.csv")
 ```
 
 
@@ -1174,7 +1330,6 @@ gain_df.to_csv("../Data/cdf_gain.csv")
 
 ```python
 def update_y_pred(X_in, model_name, cutoff):
-    
     if model_name == "Neural Network":
         y_prob = model_dict[key].predict(X_acc).reshape(-1,)
     else: 
@@ -1196,19 +1351,259 @@ discrimination_col_names = rf_select + most_select + ["addr_state","funded_amnt"
 
 
 ```python
-df_discrimination = acc.loc[:, discrimination_col_names]
-rf_cutoff = gain_dict["Random Forest"][1]
-df_discrimination["Random_Forest"] = update_y_pred(X_acc, "Neural Network", nn_cutoff)
-nn_cutoff = gain_dict["Neural Network"][1]
-df_discrimination["Neural_Network"] = update_y_pred(X_acc, "Random Forest", rf_cutoff)
+roi_discrimination = acc.loc[:, discrimination_col_names]
+rf_cutoff = roi_dict["Random Forest"][1]
+roi_discrimination["Random_Forest"] = update_y_pred(X_acc, "Random Forest", rf_cutoff)
+nn_cutoff = roi_dict["Neural Network"][1]
+roi_discrimination["Neural_Network"] = update_y_pred(X_acc, "Neural Network", nn_cutoff)
+roi_discrimination.to_csv("../Data/roi_discrimination.csv")
+display(roi_discrimination.head(10))
 ```
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>purpose</th>
+      <th>emp_length</th>
+      <th>num_tl_120dpd_2m</th>
+      <th>acc_now_delinq</th>
+      <th>annual_inc</th>
+      <th>revol_bal</th>
+      <th>avg_cur_bal</th>
+      <th>mo_sin_old_il_acct</th>
+      <th>mort_acc</th>
+      <th>pct_tl_nvr_dlq</th>
+      <th>addr_state</th>
+      <th>funded_amnt</th>
+      <th>total_pymnt</th>
+      <th>loan_status</th>
+      <th>Random_Forest</th>
+      <th>Neural_Network</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>debt_consolidation</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>195000.0</td>
+      <td>32223</td>
+      <td>71635</td>
+      <td>122</td>
+      <td>4</td>
+      <td>88.5</td>
+      <td>NM</td>
+      <td>35000</td>
+      <td>47748.356466</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>debt_consolidation</td>
+      <td>8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>105000.0</td>
+      <td>6219</td>
+      <td>3361</td>
+      <td>124</td>
+      <td>0</td>
+      <td>95.2</td>
+      <td>MD</td>
+      <td>16000</td>
+      <td>16098.340000</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>home_improvement</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>90000.0</td>
+      <td>19386</td>
+      <td>7966</td>
+      <td>180</td>
+      <td>3</td>
+      <td>100.0</td>
+      <td>ND</td>
+      <td>9000</td>
+      <td>9361.741129</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>credit_card</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>79000.0</td>
+      <td>7787</td>
+      <td>15052</td>
+      <td>138</td>
+      <td>2</td>
+      <td>95.7</td>
+      <td>OK</td>
+      <td>13550</td>
+      <td>15537.174857</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>debt_consolidation</td>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>70000.0</td>
+      <td>24472</td>
+      <td>22071</td>
+      <td>159</td>
+      <td>2</td>
+      <td>100.0</td>
+      <td>IN</td>
+      <td>10000</td>
+      <td>10924.386145</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>debt_consolidation</td>
+      <td>8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>30388.8</td>
+      <td>5546</td>
+      <td>14577</td>
+      <td>45</td>
+      <td>2</td>
+      <td>100.0</td>
+      <td>KS</td>
+      <td>7500</td>
+      <td>8668.809884</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>car</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>197000.0</td>
+      <td>762</td>
+      <td>7937</td>
+      <td>132</td>
+      <td>1</td>
+      <td>100.0</td>
+      <td>MI</td>
+      <td>7200</td>
+      <td>7954.533952</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>debt_consolidation</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>120000.0</td>
+      <td>30323</td>
+      <td>10973</td>
+      <td>163</td>
+      <td>2</td>
+      <td>98.3</td>
+      <td>NY</td>
+      <td>30000</td>
+      <td>34759.900019</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>debt_consolidation</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>80000.0</td>
+      <td>13223</td>
+      <td>3683</td>
+      <td>142</td>
+      <td>0</td>
+      <td>100.0</td>
+      <td>CA</td>
+      <td>25000</td>
+      <td>26849.046949</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>debt_consolidation</td>
+      <td>10+</td>
+      <td>0</td>
+      <td>0</td>
+      <td>69000.0</td>
+      <td>5424</td>
+      <td>2585</td>
+      <td>119</td>
+      <td>0</td>
+      <td>91.7</td>
+      <td>FL</td>
+      <td>6000</td>
+      <td>4401.370000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
 
 ```python
-df_discrimination.to_csv("../Data/cdf_discrimination.csv")
-display(df_discrimination.head(20))
+iroi_discrimination = acc.loc[:, discrimination_col_names]
+rf_cutoff = iroi_dict["Random Forest"][1]
+iroi_discrimination["Random_Forest"] = update_y_pred(X_acc, "Random Forest", rf_cutoff)
+nn_cutoff = iroi_dict["Neural Network"][1]
+iroi_discrimination["Neural_Network"] = update_y_pred(X_acc, "Neural Network", nn_cutoff)
+iroi_discrimination.to_csv("../Data/iroi_discrimination.csv")
+display(iroi_discrimination.head(10))
 ```
 
 
@@ -1437,196 +1832,6 @@ display(df_discrimination.head(20))
       <td>6000</td>
       <td>4401.370000</td>
       <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>debt_consolidation</td>
-      <td>10+</td>
-      <td>0</td>
-      <td>0</td>
-      <td>70000.0</td>
-      <td>6337</td>
-      <td>4666</td>
-      <td>35</td>
-      <td>0</td>
-      <td>94.4</td>
-      <td>MS</td>
-      <td>8200</td>
-      <td>9387.763617</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>credit_card</td>
-      <td>6</td>
-      <td>0</td>
-      <td>0</td>
-      <td>32000.0</td>
-      <td>8988</td>
-      <td>2278</td>
-      <td>78</td>
-      <td>0</td>
-      <td>100.0</td>
-      <td>FL</td>
-      <td>10000</td>
-      <td>2349.730000</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>credit_card</td>
-      <td>1 year</td>
-      <td>0</td>
-      <td>0</td>
-      <td>205000.0</td>
-      <td>33054</td>
-      <td>53503</td>
-      <td>125</td>
-      <td>1</td>
-      <td>84.2</td>
-      <td>TX</td>
-      <td>28700</td>
-      <td>29531.190000</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>debt_consolidation</td>
-      <td>8</td>
-      <td>0</td>
-      <td>0</td>
-      <td>80000.0</td>
-      <td>4532</td>
-      <td>19419</td>
-      <td>119</td>
-      <td>1</td>
-      <td>80.0</td>
-      <td>IL</td>
-      <td>10000</td>
-      <td>11026.043287</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>debt_consolidation</td>
-      <td>7</td>
-      <td>0</td>
-      <td>0</td>
-      <td>100000.0</td>
-      <td>25832</td>
-      <td>15778</td>
-      <td>102</td>
-      <td>1</td>
-      <td>100.0</td>
-      <td>PA</td>
-      <td>25000</td>
-      <td>25681.070000</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>credit_card</td>
-      <td>8</td>
-      <td>0</td>
-      <td>0</td>
-      <td>33000.0</td>
-      <td>10522</td>
-      <td>5788</td>
-      <td>236</td>
-      <td>2</td>
-      <td>100.0</td>
-      <td>CA</td>
-      <td>4400</td>
-      <td>4842.656002</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>debt_consolidation</td>
-      <td>1 year</td>
-      <td>0</td>
-      <td>0</td>
-      <td>65000.0</td>
-      <td>7789</td>
-      <td>10414</td>
-      <td>10</td>
-      <td>0</td>
-      <td>100.0</td>
-      <td>TX</td>
-      <td>9000</td>
-      <td>4365.680000</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>home_improvement</td>
-      <td>10+</td>
-      <td>0</td>
-      <td>0</td>
-      <td>120000.0</td>
-      <td>5375</td>
-      <td>10363</td>
-      <td>138</td>
-      <td>4</td>
-      <td>91.2</td>
-      <td>ID</td>
-      <td>9600</td>
-      <td>10932.383871</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>debt_consolidation</td>
-      <td>10+</td>
-      <td>0</td>
-      <td>0</td>
-      <td>38000.0</td>
-      <td>8115</td>
-      <td>1344</td>
-      <td>125</td>
-      <td>4</td>
-      <td>95.7</td>
-      <td>AZ</td>
-      <td>8200</td>
-      <td>8367.540000</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>home_improvement</td>
-      <td>1 year</td>
-      <td>0</td>
-      <td>0</td>
-      <td>32000.0</td>
-      <td>5046</td>
-      <td>2323</td>
-      <td>118</td>
-      <td>0</td>
-      <td>93.7</td>
-      <td>CA</td>
-      <td>6000</td>
-      <td>6285.191067</td>
-      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
