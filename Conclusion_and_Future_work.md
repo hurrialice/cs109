@@ -166,7 +166,7 @@ the percent variance in acceptance rate that could be explained by success rate 
 If R squared is large, we could say that acceptance of a loan request is more unbiased. Otherwise, some groups may be privileged or underprivileged. 
 
 
-![Linear regression on discrimination analysis](Conclusion_files/linear.png)
+![Linear regression on discrimination analysis](Conclusion_files/dis.png)
 
 
 However, lending club 2016 data suggests some states are off the line indicating there might be potential discrimination. For example, OR and ME have a relatively high return loan rate compare to CO and DC, but they also have a smaller accepting rate. On the other hand, some states, like NY and NJ, have relative small successful return loan rate but have accepting rate.

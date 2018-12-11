@@ -14,6 +14,7 @@ notebook: Discrimination_Analysis.ipynb
 
 
 
+
 Discrimination is the act of someone being prejudice towards another. Forms of discrimination include nationalist, race, gender, religions, etc. 
 
 As in modern world, non-discrimination has been stated on varies websites. On the bottom of each page of Lending Club, “Equal Housing Lender” logo appears, which means that "the bank makes loans without regard to race, color, religion, national origin, sex, handicap, or familial status." However, this logo doesn’t mean the web is 100% fair. In this context, we want to do more analysis  to test discrimination.
@@ -55,6 +56,8 @@ pd.set_option('display.max_columns', 100)
 To investigate whether there exists discrimination in LandingClub, we simplify our question as: whether applicants from a certain state were less likely to receive a loan.    
 One way we think about this question is that for a given state if the rejection rate is higher than the proportion of loans of that state among total loans, then that state is likely to be underprivileged.     
 The other way is that there should be a postive associate between the acceptance rate and the probability of fully paid. So we want to use data of 50 states to fit a linear regression model, the states under the trend line are likely to be underprivileged while those above the trend line should be considered as being privileged.
+
+### Data Summary
 
 
 
@@ -605,6 +608,8 @@ rej_count = pd.DataFrame({'State': rej_count.index, 'Reject Count': rej_count.va
 
 ```python
 model = pd.read_csv('cdf_discrimination.csv')
+model_roi = pd.read_csv('roi_discrimination.csv')
+model_iroi = pd.read_csv('iroi_discrimination.csv')
 model.head()
 ```
 
@@ -763,13 +768,27 @@ rf_rej = model[model['Random_Forest']== 0][['addr_state', 'Random_Forest']]
 rf_acp = model[model['Random_Forest']== 1][['addr_state', 'Random_Forest']]
 nn_rej = model[model['Neural_Network']== 0][['addr_state', 'Neural_Network']]
 nn_acp = model[model['Neural_Network']== 1][['addr_state', 'Neural_Network']]
+roi_rf_rej = model_roi[model_roi['Random_Forest']== 0][['addr_state', 'Random_Forest']]
+roi_rf_acp = model_roi[model_roi['Random_Forest']== 1][['addr_state', 'Random_Forest']]
+roi_nn_rej = model_roi[model_roi['Neural_Network']== 0][['addr_state', 'Neural_Network']]
+roi_nn_acp = model_roi[model_roi['Neural_Network']== 1][['addr_state', 'Neural_Network']]
+iroi_rf_rej = model_iroi[model_iroi['Random_Forest']== 0][['addr_state', 'Random_Forest']]
+iroi_rf_acp = model_iroi[model_iroi['Random_Forest']== 1][['addr_state', 'Random_Forest']]
+iroi_nn_rej = model_iroi[model_iroi['Neural_Network']== 0][['addr_state', 'Neural_Network']]
+iroi_nn_acp = model_iroi[model_iroi['Neural_Network']== 1][['addr_state', 'Neural_Network']]
 
 acc_rf_counts = rf_acp['addr_state'].value_counts()
 acc_rf_counts_df = pd.DataFrame({'State': acc_rf_counts.index, 'RF Accept Counts': acc_rf_counts.values})
 acc_nn_counts = nn_acp['addr_state'].value_counts()
 acc_nn_counts_df = pd.DataFrame({'State': acc_nn_counts.index, 'NN Accept Counts': acc_nn_counts.values})
-#model_rate = pd.merge(model_rate, nn_rej, how='left', on=['addr_state'])
-#model_rate = pd.merge(model_rate, nn_acp, how='left', on=['addr_state'])
+roi_acc_rf_counts = roi_rf_acp['addr_state'].value_counts()
+roi_acc_rf_counts_df = pd.DataFrame({'State': roi_acc_rf_counts.index, 'ROI RF Accept Counts': roi_acc_rf_counts.values})
+roi_acc_nn_counts = roi_nn_acp['addr_state'].value_counts()
+roi_acc_nn_counts_df = pd.DataFrame({'State': roi_acc_nn_counts.index, 'ROI NN Accept Counts': roi_acc_nn_counts.values})
+iroi_acc_rf_counts = iroi_rf_acp['addr_state'].value_counts()
+iroi_acc_rf_counts_df = pd.DataFrame({'State': iroi_acc_rf_counts.index, 'IROI RF Accept Counts': iroi_acc_rf_counts.values})
+iroi_acc_nn_counts = iroi_nn_acp['addr_state'].value_counts()
+iroi_acc_nn_counts_df = pd.DataFrame({'State': iroi_acc_nn_counts.index, 'IROI NN Accept Counts': iroi_acc_nn_counts.values})
 ```
 
 
@@ -781,12 +800,18 @@ state_rate = pd.merge(succ_rate, acc_count, how='left', on=['State'])
 state_rate = pd.merge(state_rate, rej_count, how='left', on=['State'])
 state_rate = pd.merge(state_rate, acc_rf_counts_df, how='left', on=['State'])
 state_rate = pd.merge(state_rate, acc_nn_counts_df, how='left', on=['State'])
+state_rate = pd.merge(state_rate, roi_acc_rf_counts_df, how='left', on=['State'])
+state_rate = pd.merge(state_rate, roi_acc_nn_counts_df, how='left', on=['State'])
+state_rate = pd.merge(state_rate, iroi_acc_rf_counts_df, how='left', on=['State'])
+state_rate = pd.merge(state_rate, iroi_acc_nn_counts_df, how='left', on=['State'])
 state_rate['Total Loan'] = (state_rate['Accept Count'] + state_rate['Reject Count'])
 state_rate['Accept Rate'] = state_rate['Accept Count']/state_rate['Total Loan'] 
-state_rate['Accept Rate'] = state_rate['Accept Count']/state_rate['Total Loan']
 state_rate['RF Accept Rate'] = state_rate['RF Accept Counts']/state_rate['Total Loan']
 state_rate['NN Accept Rate'] = state_rate['NN Accept Counts']/state_rate['Total Loan']
-
+state_rate['ROI RF Accept Rate'] = state_rate['ROI RF Accept Counts']/state_rate['Total Loan']
+state_rate['ROI NN Accept Rate'] = state_rate['ROI NN Accept Counts']/state_rate['Total Loan']
+state_rate['IROI RF Accept Rate'] = state_rate['IROI RF Accept Counts']/state_rate['Total Loan']
+state_rate['IROI NN Accept Rate'] = state_rate['IROI NN Accept Counts']/state_rate['Total Loan']
 state_rate.head()
 ```
 
@@ -818,10 +843,18 @@ state_rate.head()
       <th>Reject Count</th>
       <th>RF Accept Counts</th>
       <th>NN Accept Counts</th>
+      <th>ROI RF Accept Counts</th>
+      <th>ROI NN Accept Counts</th>
+      <th>IROI RF Accept Counts</th>
+      <th>IROI NN Accept Counts</th>
       <th>Total Loan</th>
       <th>Accept Rate</th>
       <th>RF Accept Rate</th>
       <th>NN Accept Rate</th>
+      <th>ROI RF Accept Rate</th>
+      <th>ROI NN Accept Rate</th>
+      <th>IROI RF Accept Rate</th>
+      <th>IROI NN Accept Rate</th>
     </tr>
   </thead>
   <tbody>
@@ -833,10 +866,18 @@ state_rate.head()
       <td>10984</td>
       <td>131</td>
       <td>115</td>
+      <td>20</td>
+      <td>32</td>
+      <td>131</td>
+      <td>109</td>
       <td>11990</td>
       <td>0.083903</td>
       <td>0.010926</td>
       <td>0.009591</td>
+      <td>0.001668</td>
+      <td>0.002669</td>
+      <td>0.010926</td>
+      <td>0.009091</td>
     </tr>
     <tr>
       <th>1</th>
@@ -846,10 +887,18 @@ state_rate.head()
       <td>85421</td>
       <td>681</td>
       <td>609</td>
+      <td>62</td>
+      <td>102</td>
+      <td>677</td>
+      <td>556</td>
       <td>90750</td>
       <td>0.058722</td>
       <td>0.007504</td>
       <td>0.006711</td>
+      <td>0.000683</td>
+      <td>0.001124</td>
+      <td>0.007460</td>
+      <td>0.006127</td>
     </tr>
     <tr>
       <th>2</th>
@@ -859,10 +908,18 @@ state_rate.head()
       <td>51294</td>
       <td>392</td>
       <td>370</td>
+      <td>41</td>
+      <td>53</td>
+      <td>439</td>
+      <td>324</td>
       <td>54629</td>
       <td>0.061048</td>
       <td>0.007176</td>
       <td>0.006773</td>
+      <td>0.000751</td>
+      <td>0.000970</td>
+      <td>0.008036</td>
+      <td>0.005931</td>
     </tr>
     <tr>
       <th>3</th>
@@ -872,10 +929,18 @@ state_rate.head()
       <td>100749</td>
       <td>1654</td>
       <td>1592</td>
+      <td>223</td>
+      <td>315</td>
+      <td>1773</td>
+      <td>1440</td>
       <td>111211</td>
       <td>0.094073</td>
       <td>0.014873</td>
       <td>0.014315</td>
+      <td>0.002005</td>
+      <td>0.002832</td>
+      <td>0.015943</td>
+      <td>0.012948</td>
     </tr>
     <tr>
       <th>4</th>
@@ -885,10 +950,18 @@ state_rate.head()
       <td>567707</td>
       <td>8368</td>
       <td>7773</td>
+      <td>1084</td>
+      <td>1635</td>
+      <td>8914</td>
+      <td>7198</td>
       <td>625595</td>
       <td>0.092533</td>
       <td>0.013376</td>
       <td>0.012425</td>
+      <td>0.001733</td>
+      <td>0.002614</td>
+      <td>0.014249</td>
+      <td>0.011506</td>
     </tr>
   </tbody>
 </table>
@@ -918,10 +991,12 @@ plt.subplots_adjust(top=0.89, bottom=0, left=0, right=1.0)
 
 
 
-![png](Discrimination_Analysis_files/Discrimination_Analysis_11_0.png)
+![png](Discrimination_Analysis_files/Discrimination_Analysis_12_0.png)
 
 
 The accepted loan count and rejected loan count are similar for each state. However, the accepting rate and success return loan rate seems have non-constant relationship.
+
+### Bias Analysis with Linear Regression
 
 
 
@@ -939,10 +1014,30 @@ X_nn = state_rate['Success Rate'].to_frame()
 y_nn = state_rate['NN Accept Rate']
 succ_to_accept_nn = LinearRegression().fit(X_rf.values, y_rf.values)
 
+X_roi_rf = state_rate['Success Rate'].to_frame()
+y_roi_rf = state_rate['ROI RF Accept Rate']
+succ_to_accept_roi_rf = LinearRegression().fit(X_roi_rf.values, y_roi_rf.values)
+
+X_roi_nn = state_rate['Success Rate'].to_frame()
+y_roi_nn = state_rate['ROI NN Accept Rate']
+succ_to_accept_roi_nn = LinearRegression().fit(X_roi_rf.values, y_roi_rf.values)
+
+X_iroi_rf = state_rate['Success Rate'].to_frame()
+y_iroi_rf = state_rate['IROI RF Accept Rate']
+succ_to_accept_iroi_rf = LinearRegression().fit(X_iroi_rf.values, y_iroi_rf.values)
+
+X_iroi_nn = state_rate['Success Rate'].to_frame()
+y_iroi_nn = state_rate['IROI NN Accept Rate']
+succ_to_accept_iroi_nn = LinearRegression().fit(X_iroi_rf.values, y_iroi_rf.values)
+
 # r2 score
 r2 = r2_score(y, succ_to_accept.predict(X.values))
 rf_r2 = r2_score(y_rf, succ_to_accept_rf.predict(X_rf.values))
 nn_r2 = r2_score(y_nn, succ_to_accept_nn.predict(X_nn.values))
+roi_rf_r2 = r2_score(y_roi_rf, succ_to_accept_roi_rf.predict(X_roi_rf.values))
+roi_nn_r2 = r2_score(y_roi_nn, succ_to_accept_roi_nn.predict(X_roi_nn.values))
+iroi_rf_r2 = r2_score(y_iroi_rf, succ_to_accept_iroi_rf.predict(X_iroi_rf.values))
+iroi_nn_r2 = r2_score(y_iroi_nn, succ_to_accept_iroi_nn.predict(X_iroi_nn.values))
 
 # Consider the distance between estimated accept rate and true rate as bias
 state_rate['BIAS'] = pd.Series(succ_to_accept.predict(X.values)) - y
@@ -977,10 +1072,18 @@ state_rate.head()
       <th>Reject Count</th>
       <th>RF Accept Counts</th>
       <th>NN Accept Counts</th>
+      <th>ROI RF Accept Counts</th>
+      <th>ROI NN Accept Counts</th>
+      <th>IROI RF Accept Counts</th>
+      <th>IROI NN Accept Counts</th>
       <th>Total Loan</th>
       <th>Accept Rate</th>
       <th>RF Accept Rate</th>
       <th>NN Accept Rate</th>
+      <th>ROI RF Accept Rate</th>
+      <th>ROI NN Accept Rate</th>
+      <th>IROI RF Accept Rate</th>
+      <th>IROI NN Accept Rate</th>
       <th>BIAS</th>
     </tr>
   </thead>
@@ -993,10 +1096,18 @@ state_rate.head()
       <td>10984</td>
       <td>131</td>
       <td>115</td>
+      <td>20</td>
+      <td>32</td>
+      <td>131</td>
+      <td>109</td>
       <td>11990</td>
       <td>0.083903</td>
       <td>0.010926</td>
       <td>0.009591</td>
+      <td>0.001668</td>
+      <td>0.002669</td>
+      <td>0.010926</td>
+      <td>0.009091</td>
       <td>-0.002699</td>
     </tr>
     <tr>
@@ -1007,10 +1118,18 @@ state_rate.head()
       <td>85421</td>
       <td>681</td>
       <td>609</td>
+      <td>62</td>
+      <td>102</td>
+      <td>677</td>
+      <td>556</td>
       <td>90750</td>
       <td>0.058722</td>
       <td>0.007504</td>
       <td>0.006711</td>
+      <td>0.000683</td>
+      <td>0.001124</td>
+      <td>0.007460</td>
+      <td>0.006127</td>
       <td>0.018300</td>
     </tr>
     <tr>
@@ -1021,10 +1140,18 @@ state_rate.head()
       <td>51294</td>
       <td>392</td>
       <td>370</td>
+      <td>41</td>
+      <td>53</td>
+      <td>439</td>
+      <td>324</td>
       <td>54629</td>
       <td>0.061048</td>
       <td>0.007176</td>
       <td>0.006773</td>
+      <td>0.000751</td>
+      <td>0.000970</td>
+      <td>0.008036</td>
+      <td>0.005931</td>
       <td>0.012694</td>
     </tr>
     <tr>
@@ -1035,10 +1162,18 @@ state_rate.head()
       <td>100749</td>
       <td>1654</td>
       <td>1592</td>
+      <td>223</td>
+      <td>315</td>
+      <td>1773</td>
+      <td>1440</td>
       <td>111211</td>
       <td>0.094073</td>
       <td>0.014873</td>
       <td>0.014315</td>
+      <td>0.002005</td>
+      <td>0.002832</td>
+      <td>0.015943</td>
+      <td>0.012948</td>
       <td>-0.010273</td>
     </tr>
     <tr>
@@ -1049,10 +1184,18 @@ state_rate.head()
       <td>567707</td>
       <td>8368</td>
       <td>7773</td>
+      <td>1084</td>
+      <td>1635</td>
+      <td>8914</td>
+      <td>7198</td>
       <td>625595</td>
       <td>0.092533</td>
       <td>0.013376</td>
       <td>0.012425</td>
+      <td>0.001733</td>
+      <td>0.002614</td>
+      <td>0.014249</td>
+      <td>0.011506</td>
       <td>-0.010752</td>
     </tr>
   </tbody>
@@ -1063,78 +1206,8 @@ state_rate.head()
 
 
 
-```python
-from scipy.stats import pearsonr
 
-values = pd.Series(np.arange(0, 8, 0.01)).to_frame()
-
-prediction = succ_to_accept.predict(values.values)
-prediction_rf = succ_to_accept_rf.predict(values.values)
-prediction_nn = succ_to_accept_nn.predict(values.values)
-trend_line = pd.DataFrame({'Success Rate': values[0], 'Accept Rate': prediction})
-trend_line_rf = pd.DataFrame({'Success Rate': values[0], 'RF Accept Rate': prediction_rf})
-trend_line_nn = pd.DataFrame({'Success Rate': values[0], 'NN Accept Rate': prediction_nn})
-
-fig, ax = plt.subplots(figsize=(16, 10))
-fig.suptitle('Linear Regression of Success Rate and Acceptance Rate',fontsize=18)
-
-plt.subplot(231)
-for i in range(len(state_rate)):
-    x = state_rate['Success Rate'][i]
-    y = state_rate['Accept Rate'][i]
-    plt.scatter(x, y, s=20, color='r')
-    plt.text(x+0.0008, y+0.0008, state_rate['State'][i], fontsize=9)
-    plt.text(0.80,0.115,'R2:0.176',color='k')
-plt.plot(trend_line['Success Rate'], trend_line['Accept Rate'], color='k')
-plt.xlim([0.65, 0.85])
-plt.ylim([0.04, 0.12])
-plt.title('Actual Accept Rate')
-plt.xlabel('Success Rate')
-plt.ylabel('Accept Rate')
-
-plt.subplot(232)
-for i in range(len(state_rate)):
-    x = state_rate['Success Rate'][i]
-    y = state_rate['RF Accept Rate'][i]
-    plt.scatter(x, y, s=20, color='b')
-    plt.text(x+0.0001, y+0.0001, state_rate['State'][i], fontsize=9)
-    plt.text(0.80,0.019,'R2:0.329')
-plt.plot(trend_line['Success Rate'], trend_line_rf['RF Accept Rate'], color='k')
-plt.xlim([0.65, 0.85])
-plt.ylim([0.0025, 0.02])
-plt.title('Predicted Accept Rate by Random Forest')
-plt.xlabel('Success Rate')
-plt.ylabel('Accept Rate')
-
-plt.subplot(233)
-for i in range(len(state_rate)):
-    x = state_rate['Success Rate'][i]
-    y = state_rate['NN Accept Rate'][i]
-    plt.scatter(x, y, s=20, color='g')
-    plt.text(x+0.0001, y+0.0001, state_rate['State'][i], fontsize=9)
-    plt.text(0.80,0.019,'R2:0.286')
-plt.plot(trend_line['Success Rate'], trend_line_nn['NN Accept Rate'], color='k')
-plt.xlim([0.65, 0.85])
-plt.ylim([0.0025, 0.02])
-plt.title('Predicted Accept Rate by Neural Network')
-plt.xlabel('Success Rate')
-plt.ylabel('Accept Rate')
-
-x_ticks = ax.get_xticks()
-y_ticks = ax.get_yticks()
-ax.set_xticklabels(['{:3.2f}%'.format(k*100) for k in x_ticks])
-ax.set_yticklabels(['{:3.2f}%'.format(k*100) for k in y_ticks])
-ax.set_ylabel('Accept Rate (%)')
-ax.set_xlabel('Success Rate (%)')
-
-for item in ([ax.title, ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()):
-    item.set_fontsize(13)
-plt.show()
-```
-
-
-
-![png](Discrimination_Analysis_files/Discrimination_Analysis_14_0.png)
+![png](Discrimination_Analysis_files/Discrimination_Analysis_16_0.png)
 
 
 For the first plot, under non-discrimination assumption, we hope the successful return loan rate and accepting rate have positive linear relationship that successful return loan rate is the only cause of accepting rate. However, in reality, some states are off the line indicating there might be potential discrimination. For example, some states, such as OR and ME, have relative high return loan rate compare to CO and DC, but they also have smaller accepting rate. On the other hand, some states, like NY and NJ, have relative small successful return loan rate but have accepting rate.     
@@ -1156,7 +1229,7 @@ plt.show()
 
 
 
-![png](Discrimination_Analysis_files/Discrimination_Analysis_16_0.png)
+![png](Discrimination_Analysis_files/Discrimination_Analysis_18_0.png)
 
 
 Similar to previous plot, in reality, some states have high accepting rate than expected.
@@ -1205,6 +1278,8 @@ py.iplot( fig, filename='lendingclub-cloropleth-map-2' )
 
 From the above US map, most northern states have lower rejection rates while southern states have higher rejection rates. This trend may show some discrimination in Lending Club.
 
+### Difference Between Actual and Expect Number of Rejects
+
 
 
 ```python
@@ -1242,7 +1317,7 @@ plt.show()
 
 
 
-![png](Discrimination_Analysis_files/Discrimination_Analysis_21_0.png)
+![png](Discrimination_Analysis_files/Discrimination_Analysis_24_0.png)
 
 
 Some states (CA, FL, AZ, etc) have higher acceptance proportion than rejection proportion.
@@ -1272,7 +1347,7 @@ plt.show()
 
 
 
-![png](Discrimination_Analysis_files/Discrimination_Analysis_24_0.png)
+![png](Discrimination_Analysis_files/Discrimination_Analysis_27_0.png)
 
 
 In reality, some states have lower rejected-loan counts than expected (states on the left) while many other states have higher rejected-loan counts than expected (states on the right).
