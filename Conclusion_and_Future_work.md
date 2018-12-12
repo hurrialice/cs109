@@ -186,7 +186,7 @@ In summary, according to the high-level project goal,
 
 - We have identified key consensus variables that are of high importance. Most of them fall in either personal empolyment information, or account/credit information.
 
-- We devised improved version of ROI (iROI) that takes both exact and hidden return into account. We calculated expected ROI and found that our best model could increase ROI by 15%
+- We calculated expected ROI and found that our best model could increase ROI by about 10%. We devised improved version of ROI (iROI) that takes both exact and hidden return into account. To accomodate different strategy of different types of investors, we would recommend ROI-based prediction to safety-based investors, while recommend iROI-based predictions to profit-driven investors.
 
 - Predictive quality are measured on a set of performance metrics, on both entire 2016 data and test set.
 

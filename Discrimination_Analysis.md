@@ -1207,7 +1207,7 @@ state_rate.head()
 
 
 
-![png](Discrimination_Analysis_files/Discrimination_Analysis_16_0.png)
+![png](Discrimination_Analysis_files/dis.png)
 
 
 For the first plot, under non-discrimination assumption, we hope the successful return loan rate and accepting rate have positive linear relationship that successful return loan rate is the only cause of accepting rate. However, in reality, some states are off the line indicating there might be potential discrimination. For example, some states, such as OR and ME, have relative high return loan rate compare to CO and DC, but they also have smaller accepting rate. On the other hand, some states, like NY and NJ, have relative small successful return loan rate but have accepting rate.     

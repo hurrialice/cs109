@@ -13,10 +13,6 @@ notebook: Models.ipynb
 
 
 
-
-
-
-
 ## Load libraries
 
 
@@ -810,7 +806,9 @@ Based on our model, if one application's loan_status is predicted as 1, we will 
 The nominator **(Gain from Investment - Cost of Investment)** is also defined as the **net return on investment (NRI)**. 
 
 
-The most straightforward way to encode ROI is to use net return from our investments divided by the amount of investments:**(Exact Gain - Exact Loss)/ Total Funded**
+The most straightforward way to encode ROI is to use net return from our investments divided by the amount of investments:
+
+$$ROI = \frac{NRI}{\sum \ funded\_amnt}$$
 
 However we try to approach this problem in a different way. There are four different scenarios of predicted loan_status vs. true loan_status, as shown in the following table. We are using the `Loan Data` of 2016 from the website, including all the loan not declined, hence, all these applications are invested in real world. 
 

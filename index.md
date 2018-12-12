@@ -38,15 +38,22 @@ Moreover, similar to other loan and investment platforms, Lending Club claims it
 ## Project Statement  
 
 
-Our goal in this project is:   
+
+### Mission
 
 
-- to predict the probability that a loan will be fully returned plus interest rate by the end of the due date when the loan just be proved by lending company
+1. To find the optimal model-based investiment strategy and sigificant factors leveraging our strategy
+
+2. In terms of ethical implications, we assessed whether this potential difference in acceptance rates across regions could be fully explained by the successful return rate from Lending Club records.
+
+### Goal
+
+- Predict the probability that a loan will be fully returned plus interest rate by the end of the due date when the loan just be proved by lending company
 
 
-- use the probilities from (1) to calculate Return on Investment (ROI), where ROI is a performance measure used to evaluate the efficiency of an investment or compare the efficiency of a number of different investments. ROI tries to directly measure the amount of return on a particular investment, relative to the investment’s cost.
+- Use the probilities from (1) to calculate Return on Investment (ROI), where ROI is a performance measure used to evaluate the efficiency of an investment or compare the efficiency of a number of different investments. ROI tries to directly measure the amount of return on a particular investment, relative to the investment’s cost.
 
-- compare predicted ROI with true ROI to see the benefit of our model (profit)
+- Compare predicted ROI with true ROI to see the benefit of our model (profit)
 
 
 - use rejected loan data and accepted loan data to find discrimination among states
