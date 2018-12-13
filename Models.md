@@ -481,7 +481,7 @@ sclf_p = plot2graphs(sclf, "Stacking")
 
 Additional explanations:
 
-- We use `ELU` as the activation function, which speeds up learning, ensures a noise-robust deactivation state and leads to higher classification accuracies. Reference: Fast and Accurate Deep Network Learning by Exponential Linear Units (ELUs), https://arxiv.org/abs/1511.07289
+- We use `RELU` as the activation function, which speeds up learning, ensures a noise-robust deactivation state and leads to higher classification accuracies. Reference: Fast and Accurate Deep Network Learning by Exponential Linear Units (ELUs), https://arxiv.org/abs/1511.07289
 
 - We use `adamax` as the optimizer, which is a special case of `adam`. 
 `adam` is well suited for our problem where we have a large amount of data (n_train = 30,000) and parameters (p = 76) and the hyper-parameters have intuitive interpretation and typically require little tuning. `adamax` is more robust to noisy/sparse gradients compared with `adam`. Reference: 1. Adam: A Method for Stochastic Optimization, link: https://arxiv.org/pdf/1412.6980.pdf. 2. Gentle Introduction to the Adam Optimization Algorithm for Deep Learning, link: https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/.
